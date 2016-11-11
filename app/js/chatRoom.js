@@ -8,7 +8,8 @@ app.controller("chatRoomCtrl",
 
 		$scope.input = {
 			message: "",
-			date: ""
+			date: "",
+			userName: ""
 		}
 		// sync with firebaseArray
 		var ref = firebase.database().ref("chatRoom");
@@ -19,6 +20,7 @@ app.controller("chatRoomCtrl",
 			// update the date
 			if ( $scope.input.message != "" ) {
 				$scope.input.date = new Date().toString();
+				$scope.input.userName = user.displayName;
 				// add an input question
 				$scope.chatList.$add($scope.input);
 			}
