@@ -18,8 +18,6 @@ app.controller("chatRoomCtrl",
 		$scope.addMessage = function() {
 			
 			// update the date
-			firebase.auth().onAuthStateChanged(function(firebaseUser) {
-		if(firebaseUser) {
 			var user = firebase.auth().currentUser;
 				if ( $scope.input.message != "" ) {
 					$scope.input.date = new Date().toString();
@@ -29,6 +27,4 @@ app.controller("chatRoomCtrl",
 				}
 			}
 		}
-
-	}
 );
