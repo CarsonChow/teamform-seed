@@ -81,7 +81,7 @@
 			<div class="list-messages" id="listMessages">
 				<p>Messages:</p>
 				<ul ng-repeat="text in chatList">
-					{{text.userName}}
+					{{text.userName}}:
 					{{text.message}} </br>
 					{{text.date}}
 				</ul>
@@ -94,6 +94,11 @@
 		</div>
 		<!-- Controller -->
 		<script src="js/chatRoom.js"></script>
+		<script src="lib/angular.min.js"></script>
+        <script src="lib/angular-route.min.js"></script>
+
+        <script src="lib/firebase.js"></script>
+        <script src="lib/angularfire.min.js"></script>
 			
 	</body>
 </html>
