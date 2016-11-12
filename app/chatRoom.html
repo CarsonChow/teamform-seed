@@ -16,13 +16,13 @@
 	<script>
 	// Initialize Firebase
 		var config = {
-		apiKey: "AIzaSyDpVqVvHIhoL6i02-hNzKFwq4UfLFAakAQ",
-		authDomain: "team-anonymous-team-forming.firebaseapp.com",
-		databaseURL: "https://team-anonymous-team-forming.firebaseio.com",
-		storageBucket: "team-anonymous-team-forming.appspot.com",
-		messagingSenderId: "903294276428"
-	};
-	firebase.initializeApp(config);
+    apiKey: "AIzaSyDInaL2TYTksmtpQy35rmS-DSEmkWqxcU0",
+    authDomain: "projecttesting-cd63f.firebaseapp.com",
+    databaseURL: "https://projecttesting-cd63f.firebaseio.com",
+    storageBucket: "projecttesting-cd63f.appspot.com",
+    messagingSenderId: "936855257877"
+  };
+  firebase.initializeApp(config);
 
 	
 	</script>
@@ -38,13 +38,9 @@
 	
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/bootstrap.min.js"></script>
-
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" href="css/font-awesome.min.css">
-	<link rel="stylesheet" href="css/site.css" >
-
 	<script src="js/site.js"></script>
+	
+
 	
 	</head>
 	
@@ -84,6 +80,7 @@
 			<div class="list-messages" id="listMessages">
 				<p>Messages:</p>
 				<ul ng-repeat="text in chatList">
+					{{text.userName}}
 					{{text.message}} </br>
 					{{text.date}}
 				</ul>
@@ -96,13 +93,6 @@
 		</div>
 		<!-- Controller -->
 		<script src="js/chatRoom.js"></script>
-		
-		<script src="lib/angular.min.js"></script>
-		<script src="lib/angular-route.min.js"></script>        
-		
-		<script src="lib/firebase.js"></script>     
-		<script src="lib/angularfire.min.js"></script>
-	
-		<script src="js/index.js"></script>
+			
 	</body>
 </html>
