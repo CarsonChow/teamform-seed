@@ -19,9 +19,10 @@ app.controller("chatRoomCtrl",
 			
 			// update the date
 			var user = firebase.auth().currentUser;
+			var name = user.displayName;
 				if ( $scope.input.message != "" ) {
 					$scope.input.date = new Date().toString();
-					$scope.input.userName = user.displayName;
+					$scope.input.userName = name;
 					// add an input question
 					$scope.chatList.$add($scope.input);
 				}
