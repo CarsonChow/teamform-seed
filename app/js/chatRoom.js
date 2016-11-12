@@ -18,17 +18,13 @@ app.controller("chatRoomCtrl",
 		$scope.addMessage = function() {
 			
 			// update the date
-			firebase.auth().onAuthStateChanged(function(firebaseUser) {
-				if(firebaseUser) {
-					var user = firebase.auth().currentUser;
-							if ( $scope.input.message != "" ) {
-								$scope.input.date = new Date().toString();
-								$scope.input.userName = user.displayName;
-								// add an input question
-								$scope.chatList.$add($scope.input);
-							}
-						}
-					}
-		};
-	}
+			var user = firebase.auth().currentUser;
+				if ( $scope.input.message != "" ) {
+					$scope.input.date = new Date().toString();
+					$scope.input.userName = user.displayName;
+					// add an input question
+					$scope.chatList.$add($scope.input);
+				}
+			}
+		}
 );
