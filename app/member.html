@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="css/login.css">
 
 	<script src="js/site.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/chatRoom.css">
 </head>
 
 <body ng-controller="MemberCtrl">
@@ -123,6 +124,23 @@
 			</div>
 			<div class="col-md-2 col-xs-1"></div>
 		</div>
+		
+		<div ng-controller="chatRoomCtrl">		
+			<!-- Chat List -->
+			<div class="list-messages" id="listMessages">
+				<p>Messages:</p>
+				<ul ng-repeat="text in chatList">
+					{{text.userName}}:
+					{{text.message}} </br>
+					{{text.date}}
+				</ul>
+			</div>
+			<!-- Input -->
+			<div class="new-message" id="newMessage">
+			<input id="message" type="text" name="message" ng-model="input.message" <textarea class="form-control" rows="5"></textarea>	
+			<button type="button" ng-click="addMessage()"  class="btn btn-success">Sent</button>		
+			</div>
+		</div>
 	
 	
 
@@ -133,6 +151,7 @@
 	<script src="lib/angularfire.min.js"></script>
 
 	<script src="js/member.js"></script>
+	<script src="js/chatRoom.js"></script>
 
 </body>
 </html>
