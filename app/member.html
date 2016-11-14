@@ -64,6 +64,7 @@
 			<div class="col-sm-6 col-xs-8 panel">
 				<button type="button" class="btn btn-primary" id="savebtn" ng-click="saveFunc();" >Save</button>
 				<button type="button" class="btn btn-primary" id="atbtn" ng-click="atFunc();" >Ability test</button>
+				<button type="button" class="btn btn-primary" id="btn_chat">Join the chat room</button>
 			</div>
 			<div class="col-sm-3 col-xs-2"></div>
 		</div>
@@ -125,23 +126,6 @@
 			<div class="col-md-2 col-xs-1"></div>
 		</div>
 		
-		<!-- Chat Room-->
-			<div ng-controller="chatRoomCtrl">		
-				<!-- Chat List -->
-				<div class="list-messages" id="listMessages">
-					<p>Messages:</p>
-					<ul ng-repeat="text in chatList">
-						{{text.userName}}:
-						{{text.message}} </br>
-						{{text.date}}
-					</ul>
-				</div>
-				<!-- Input -->
-				<div class="new-message" id="newMessage">
-				<input id="message" type="text" name="message" ng-model="input.message" <textarea class="form-control" rows="5"></textarea>	
-				<button type="button" ng-click="addMessage()"  class="btn btn-success">Sent</button>		
-				</div>
-			</div>
 	
 
 	<script src="lib/angular.min.js"></script>
