@@ -14,7 +14,7 @@ app.controller("chatRoomCtrl",
 		// sync with firebaseArray
 		var eventName = getURLParameter("q");
 		if(eventName != null && eventName !== ''){
-			var ref = firebase.database().ref("chatRoom" + eventName);
+			var ref = firebase.database().ref("chatRoom");
 			}
 		$scope.chatList = $firebaseArray(ref);
 
