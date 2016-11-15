@@ -16,7 +16,8 @@ describe('chatRoom test', function() {
 			$scope.input.message = "whatever";
 			$scope.addMessage();
 			expect($scope.chatList.message).toBe("whatever");
-			expect($scope.chatList.userName).toBe(null);
+			expect($scope.chatList.userName).toBeUndefined();
+			expect($scope.chatList.date).toBeDefined();
 		});
 		
 	});
