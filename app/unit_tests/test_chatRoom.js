@@ -13,11 +13,6 @@ describe('chatRoom test', function() {
 	
 	describe('chat room test', function() {
 		it('addMessage', function() {
-			$scope.input.message = "whatever";
-			$scope.addMessage();
-			expect($scope.chatList.message).toBeUndefined();
-			expect($scope.chatList.userName).toBeUndefined();
-			expect($scope.chatList.date).toBeUndefined();
 		});
 		
 	});
