@@ -24,6 +24,11 @@ app.controller("chatRoomCtrl",
 												$scope.input.date = new Date().toString();
 												$scope.chatList.$add($scope.input);
 										}
+						else{
+							$scope.input.userName = "visitor";
+							$scope.input.date = new Date().toString();
+							$scope.chatList.$add(scope.input);
+						}
 									})
 				}
 			}
