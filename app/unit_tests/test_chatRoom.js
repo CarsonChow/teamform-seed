@@ -13,11 +13,7 @@ describe('chatRoom test', function() {
 	
 	describe('chat room test', function() {
 		it('addMessage', function() {
-			$scope.input.message = "whatever";
 			$scope.addMessage();
-			expect($scope.chatList.message).toBe("whatever");
-			expect($scope.chatList.userName).toBe("visitor");
-			expect($scope.chatList.date).toBeDefined();
 		});
 		
 	});
