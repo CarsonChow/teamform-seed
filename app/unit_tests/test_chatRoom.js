@@ -15,9 +15,9 @@ describe('chatRoom test', function() {
 		it('addMessage', function() {
 			$scope.input.message = "whatever";
 			$scope.addMessage();
-			expect($scope.chatList.message).toBeDefined();
-			expect($scope.chatList.userName).toBeDefined();
-			expect($scope.chatList.date).toBeDefined();
+			expect($scope.chatList.message).toBeUndefined();
+			expect($scope.chatList.userName).toBeUndefined();
+			expect($scope.chatList.date).toBeUndefined();
 		});
 		
 	});
