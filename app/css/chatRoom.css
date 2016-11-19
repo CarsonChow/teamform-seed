@@ -5,11 +5,13 @@ body {
 
 div.list-messages {
   width: 600px;
+  height: 500px;
   margin: 20px auto 0;
   background: #f3f3f3;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
+  overflow: scroll;
 
   ul {
     margin: 0;
@@ -77,4 +79,10 @@ div.new-message {
       margin-left: 10px;
     }
   }
+}
+
+h3.chat-head {
+  color:blue;
+  text-align:center;
+  text-decoration: underline;
 }

@@ -220,6 +220,32 @@ angular.module('teamform-member-app', ['firebase'])
 		
 	};	
 	$scope.refreshTeams(); // call to refresh teams...
+	
+	//chatRoom
+	$scope.input = {
+			message: "",
+			date: "",
+			userName: ""
+		}
+		var eventName = getURLParameter("q");
+		var ref = firebase.database().ref("chatRoom" + eventName);
+		$scope.chatList = $firebaseArray(ref);
+		console.log("Enter");
+
+		$scope.addMessage = function() {
+			
+			// update the date
+				if ( $scope.input.message != "" ) {
+					firebase.auth().onAuthStateChanged(function(firebaseUser) {
+						if(firebaseUser) {
+												var user = firebase.auth().currentUser;
+												$scope.input.userName = user.displayName;
+												$scope.input.date = new Date().toString();
+												$scope.chatList.$add($scope.input);
+										}
+									})
+				}
+			}
 }])
 
 ;

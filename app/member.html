@@ -18,6 +18,8 @@
 	<link rel="stylesheet" href="css/login.css">
 
 	<script src="js/site.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="css/chatRoom.css">
 </head>
 
 <body ng-controller="MemberCtrl">
@@ -63,7 +65,7 @@
 			<div class="col-sm-6 col-xs-8 panel">
 				<button type="button" class="btn btn-primary" id="savebtn" ng-click="saveFunc();" >Save</button>
 				<button type="button" class="btn btn-primary" id="atbtn" ng-click="atFunc();" >Ability test</button>
-				<button type="button" class="btn btn-primary" id="btn_chat">Join the chat room</button>
+				<!--<button type="button" class="btn btn-primary" id="btn_chat">Join the chat room</button>-->
 			</div>
 			<div class="col-sm-3 col-xs-2"></div>
 		</div>
@@ -92,7 +94,7 @@
 					<button type="button" class="btn btn-default btn-xs pull-left" id="delbtn" ng-click="tags.splice(tags.indexOf(t), 1);" ><span class="glyphicon glyphicon-remove"></span> {{t}}</button>
 	    		</div>		
 			</div>
-		</div>
+		</div>		
 		
 		<div class="row">	<!-- row 4 -->
 			<div class="col-md-2 col-xs-1"></div>
@@ -129,6 +131,21 @@
 				</div>
 			</div>
 			<div class="col-md-2 col-xs-1"></div>
+			<!-- Chat List -->
+			<div class="list-messages" id="listMessages" class="col-md-8">
+				<h3 class="chat-head" color:blue;>Event Chat Board</h3>
+				<p>&nbsp Messages:</p>
+				<ul ng-repeat="text in chatList">
+					{{text.userName}}:
+					{{text.message}} </br>
+					{{text.date}}
+				</ul>
+			</div>
+			<!-- Input -->
+			<div class="new-message" id="newMessage">
+			<input id="message" type="text" name="message" ng-model="input.message" <textarea class="form-control" rows="5"></textarea>	
+			<button type="button" ng-click="addMessage()"  class="btn btn-success">Sent</button>		
+			</div>
 		</div>
 		
 	
@@ -140,6 +157,7 @@
 	<script src="lib/angularfire.min.js"></script>
 
 	<script src="js/member.js"></script>
+	<script src="js/chatRoom.js"></script>
 
 </body>
 </html>

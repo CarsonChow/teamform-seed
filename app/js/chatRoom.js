@@ -12,6 +12,7 @@ app.controller("chatRoomCtrl",
 		var eventName = getURLParameter("q");
 		var ref = firebase.database().ref("chatRoom" + eventName);
 		$scope.chatList = $firebaseArray(ref);
+		console.log("Enter");
 
 		$scope.addMessage = function() {
 			
