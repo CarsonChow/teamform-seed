@@ -27,8 +27,8 @@ angular.module('teamform-member-app', ['firebase'])
     };
 })
 .controller('MemberCtrl', ['$scope', '$firebaseObject', '$firebaseArray', function($scope, $firebaseObject, $firebaseArray) {
-	
-	// TODO: implementation of MemberCtrl	
+
+	// TODO: implementation of MemberCtrl
 
 	$scope.teams = {};
 	$scope.memberInfo = "";
@@ -38,6 +38,7 @@ angular.module('teamform-member-app', ['firebase'])
 	$scope.eventName = getURLParameter("q");
 	$scope.ntags = [];
     $scope.ntags = $firebaseArray(firebase.database().ref("newTags"));
+	$scope.errMsg = "";
 
 	firebase.auth().onAuthStateChanged(function(firebaseUser) {
       if(firebaseUser) {
@@ -61,10 +62,15 @@ angular.module('teamform-member-app', ['firebase'])
 			$scope.selection = [];
 		}
 		if(typeof $scope.memberInfo.tags != 'undefined') {
-			$scope.tags = $scope.memberInfo.tags;			
+			$scope.tags = $scope.memberInfo.tags;
 		} else {
 			$scope.tags = [];
-		}				
+		}
+		if(typeof $scope.memberInfo.ability != 'undefined') {
+			$scope.ability = $scope.memberInfo.ability;
+		} else {
+			$scope.ability = [];
+		}
 		if($scope.memberInfo.inTeam != null) {
 			$("#teamStatus").html("You have joined team " + $scope.memberInfo.inTeam + ".");
 			$scope.loadFuncTest = "inTeam";
@@ -84,28 +90,46 @@ angular.module('teamform-member-app', ['firebase'])
 			$("#inviteStatus").html("You have no invitation.");
 			$scope.loadFuncTest += " noinvite";
 		}
+		// check quiz
+		if($scope.ability.java.marks >= 50) {$scope.addTag2("Java");}
+		if($scope.ability.cpp.marks >= 50) {$scope.addTag2("C++");}
+		if($scope.ability.python.marks >= 50) {$scope.addTag2("Python");}
+		if($scope.ability.html.marks >= 50) {$scope.addTag2("HTML");}
     };
 
 	$scope.loadFunc = function() {
-		var refPath = $scope.eventName + "/member/" + $scope.uid;		
+		var refPath = $scope.eventName + "/member/" + $scope.uid;
 		$scope.memberInfo = $firebaseObject(firebase.database().ref(refPath));
 		$scope.memberInfo.$loaded().then($scope.loadFuncCallback);
 	};
-	
+
 	$scope.addTag = function() {
 		 var tag = $.trim($scope.tag);
-				
-		if(tag !== '' && $scope.tags.indexOf(tag) === -1) {
+
+		if(tag !== '' && $scope.tags.indexOf(tag) === -1 && $scope.checkTag(tag)) {
 			$scope.tags.push(tag);
 		}
 		$scope.tag = "";
 	};
 	
+	$scope.addTag2 = function(tag) {
+		if(tag !== '' && $scope.tags.indexOf(tag) === -1) {
+			$scope.tags.push(tag);
+		}
+	};
+
+	$scope.checkTag = function(tag) {
+		if (tag == "C++" || tag == "Java" || tag == "HTML" || tag == "Python") {
+			return false;
+		}
+		return true;
+	}
+
 	$scope.saveFunc = function() {
 		var newData = {
 			'tags' : $scope.tags,
 			'selection': $scope.selection,
-			'weight': 0 
+			'weight': 0
 		};
 		var refPath = $scope.eventName + "/member/" + $scope.uid;
 		var ref = firebase.database().ref(refPath);
@@ -113,11 +137,11 @@ angular.module('teamform-member-app', ['firebase'])
 			window.location.href = "index.html";
 		});
 	};
-	
+
 	$scope.refreshTeams = function() {
 		var refPath = $scope.eventName + "/team";
 		var ref = firebase.database().ref(refPath);
-		
+
 		// Link and sync a firebase object
 		$scope.selection = [];
 		$scope.toggleSelection = function (item) {
@@ -131,9 +155,24 @@ angular.module('teamform-member-app', ['firebase'])
 		}
 		$scope.teams = $firebaseArray(ref);
 	};
-	
-	$scope.atFunc = function() {
-		var url = "abilitytest.html?q=" + $scope.eventName;
+
+	$scope.javaFunc = function() {
+		var url = "abilitytest.html?q=" + $scope.eventName + "&u=java";
+		window.location.href = url;
+	};
+
+	$scope.cppFunc = function() {
+		var url = "abilitytest.html?q=" + $scope.eventName + "&u=cpp";
+		window.location.href = url;
+	};
+
+	$scope.htmlFunc = function() {
+		var url = "abilitytest.html?q=" + $scope.eventName + "&u=html";
+		window.location.href = url;
+	};
+
+	$scope.pythonFunc = function() {
+		var url = "abilitytest.html?q=" + $scope.eventName + "&u=python";
 		window.location.href = url;
 	};
 
@@ -163,15 +202,15 @@ angular.module('teamform-member-app', ['firebase'])
 				var refPath = $scope.eventName + "/team/" + teamName;
 				$scope.teamMember = $firebaseObject(firebase.database().ref(refPath));
 				$scope.teamMember.$loaded(function(data){
-					acceptInvCallback(data);
+					$scope.acceptInvCallback(data);
 				});
-			}	
-		}		
+			}
+		}
 	};
 
 	$scope.acceptInvCallback = function(data) {
 		console.log("data: ",data);
-					
+
 		$scope.newMemberList = [];
 		$scope.team = data;
 		console.log("$scope.team ",$scope.team);
@@ -190,7 +229,7 @@ angular.module('teamform-member-app', ['firebase'])
 			teamMembers: $scope.newMemberList
 		});
 		//remove invitedBy list
-		var refPath1 = g$scope.eventName + "/member/" + $scope.uid + "/invitedBy";
+		var refPath1 = $scope.eventName + "/member/" + $scope.uid + "/invitedBy";
 		var ref1 = firebase.database().ref(refPath1);
 		ref1.remove();
 		window.alert("Invitation accepted!");
@@ -203,7 +242,7 @@ angular.module('teamform-member-app', ['firebase'])
 			inTeam: $scope.team.$id
 		});
 	};
-	
+
 	$scope.declineInv = function(teamName){
 		var x;
 		x = confirm("Are you sure?");
@@ -215,37 +254,11 @@ angular.module('teamform-member-app', ['firebase'])
 				var ref = firebase.database().ref(refPath);
 				ref.update({
 					invitedBy: $scope.memberInfo.invitedBy
-				}); 
+				});
 		}}
-		
-	};	
-	$scope.refreshTeams(); // call to refresh teams...
-	
-	//chatRoom
-	$scope.input = {
-			message: "",
-			date: "",
-			userName: ""
-		}
-		var eventName = getURLParameter("q");
-		var ref = firebase.database().ref("chatRoom" + eventName);
-		$scope.chatList = $firebaseArray(ref);
-		console.log("Enter");
 
-		$scope.addMessage = function() {
-			
-			// update the date
-				if ( $scope.input.message != "" ) {
-					firebase.auth().onAuthStateChanged(function(firebaseUser) {
-						if(firebaseUser) {
-												var user = firebase.auth().currentUser;
-												$scope.input.userName = user.displayName;
-												$scope.input.date = new Date().toString();
-												$scope.chatList.$add($scope.input);
-										}
-									})
-				}
-			}
+	};
+	$scope.refreshTeams(); // call to refresh teams...
 }])
 
 ;
