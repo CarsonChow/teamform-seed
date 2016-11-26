@@ -9,7 +9,7 @@ $(document).ready(function(){
 	}
 
 });
-
+/*
 $("#btn_chat").click(function() {
     	var val = getURLParameter("q");
     	if(val !== '') {
@@ -18,7 +18,7 @@ $("#btn_chat").click(function() {
     		return false;
     	}
     });
-
+*/
 angular.module('teamform-member-app', ['firebase'])
 .directive('login', function() {
     return {
@@ -40,6 +40,8 @@ angular.module('teamform-member-app', ['firebase'])
     $scope.ntags = $firebaseArray(firebase.database().ref("newTags"));
 	$scope.errMsg = "";
 
+	$scope.showingChatroom = false;
+	
 	firebase.auth().onAuthStateChanged(function(firebaseUser) {
       if(firebaseUser) {
       	var user = firebase.auth().currentUser;
@@ -71,25 +73,7 @@ angular.module('teamform-member-app', ['firebase'])
 		} else {
 			$scope.ability = [];
 		}
-		if($scope.memberInfo.inTeam != null) {
-			$("#teamStatus").html("You have joined team " + $scope.memberInfo.inTeam + ".");
-			$scope.loadFuncTest = "inTeam";
-		}
-		else {
-			$("#teamStatus").html("You haven't joined any team. Check the box below to request to join\
-			 the team or <a href=\"team.html?q=" + $scope.eventName + "\">Click here</a> to create\
-			  a team.");
-			$scope.loadFuncTest = "notinTeam";
-		}
-		//check for invitation
-		if($scope.memberInfo.invitedBy != null){
-			$("#inviteStatus").html("You are invited by " + $scope.memberInfo.invitedBy.length + " teams in the event " + $scope.eventName + ".");
-			$scope.loadFuncTest += " invite";
-		}
-		else{
-			$("#inviteStatus").html("You have no invitation.");
-			$scope.loadFuncTest += " noinvite";
-		}
+
 		// check quiz
 		if($scope.ability.java.marks >= 50) {$scope.addTag2("Java");}
 		if($scope.ability.cpp.marks >= 50) {$scope.addTag2("C++");}
@@ -111,7 +95,7 @@ angular.module('teamform-member-app', ['firebase'])
 		}
 		$scope.tag = "";
 	};
-	
+
 	$scope.addTag2 = function(tag) {
 		if(tag !== '' && $scope.tags.indexOf(tag) === -1) {
 			$scope.tags.push(tag);
@@ -124,8 +108,74 @@ angular.module('teamform-member-app', ['firebase'])
 		}
 		return true;
 	}
+	//tagFiltering
+	$scope.searchTags = [];
+	$scope.openCategory = function(dVal){
+		document.getElementById(dVal).classList.toggle("show");
+	};	
+	$scope.filterByTag =function(teamTag){
+		if ($scope.searchTags.length == 0){return true;}
+		var length = (typeof teamTag != "undefined")? teamTag.length: 0;
+		var slength = (typeof $scope.searchTags != "undefined")? $scope.searchTags.length: 0;
+		for (var i=0;i<slength;i++){
+			for (var j=0; j<length;j++){
+				if(teamTag[j] == $scope.searchTags[i]){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	$scope.addSearchTags = function(tagval){
+		var addOrNot = true;
+		var k = 0;
+		var length = (typeof $scope.searchTags != "undefined")? $scope.searchTags.length: 0;
+		for(; k < length; k++){
+			if(tagval == $scope.searchTags[k]){
+				addOrNot = false;
+				break;
+			}
+		}
+		if(addOrNot){
+			$scope.searchTags.push(tagval);
+		}
+		else{
+			$scope.searchTags.splice(k,1);
+		}
+
+	};
+	//tagFiltering ends
+	$scope.leaveTeam = function() {
+		if($scope.memberInfo.inTeam === undefined) return;
+		var refPath = $scope.eventName + "/member/" + $scope.uid + "/inTeam";
+		var teamRefPath = $scope.eventName + "/team/" + $scope.memberInfo.inTeam;
+		var ref = firebase.database().ref(refPath);
+		ref.remove();
+
+		ref = firebase.database().ref(teamRefPath);
+		var team = $firebaseObject(ref);
+		team.$loaded(function(data) {
+			var idx = data.teamMembers.indexOf($scope.uid);
+			data.teamMembers.splice(idx, 1);
+			ref.update({teamMembers: data.teamMembers});
+		});
+	};
 
 	$scope.saveFunc = function() {
+		$scope.userInfo = $firebaseObject(firebase.database().ref().child("user").child($scope.uid));
+		$scope.userInfo.$loaded().then(function() {
+			if(typeof $scope.userInfo.joinedEvent != "undefined") {
+				$scope.joinedEvent = $scope.userInfo.joinedEvent;
+				if($scope.joinedEvent.indexOf(eventName) == -1) {
+					$scope.joinedEvent.push(eventName);
+				}
+			}
+			else {
+				$scope.joinedEvent = [];
+				$scope.joinedEvent.push(eventName);
+			}
+			firebase.database().ref().child("user").child($scope.uid).update({joinedEvent: $scope.joinedEvent});
+		});
 		var newData = {
 			'tags' : $scope.tags,
 			'selection': $scope.selection,
@@ -156,30 +206,11 @@ angular.module('teamform-member-app', ['firebase'])
 		$scope.teams = $firebaseArray(ref);
 	};
 
-	$scope.javaFunc = function() {
-		var url = "abilitytest.html?q=" + $scope.eventName + "&u=java";
-		window.location.href = url;
-	};
-
-	$scope.cppFunc = function() {
-		var url = "abilitytest.html?q=" + $scope.eventName + "&u=cpp";
-		window.location.href = url;
-	};
-
-	$scope.htmlFunc = function() {
-		var url = "abilitytest.html?q=" + $scope.eventName + "&u=html";
-		window.location.href = url;
-	};
-
-	$scope.pythonFunc = function() {
-		var url = "abilitytest.html?q=" + $scope.eventName + "&u=python";
-		window.location.href = url;
-	};
-
 	$scope.token = "";
 	$scope.acceptInv = function(teamName){
 		//Get the index of teamName in team
 		var index;
+		console.log("teams: ", $scope.teams);
 		for(var i=0; i<$scope.teams.length; i++){
 			if(teamName === $scope.teams[i].$id){
 				index = i;
@@ -241,6 +272,7 @@ angular.module('teamform-member-app', ['firebase'])
 			invitedBy: [],
 			inTeam: $scope.team.$id
 		});
+		reload();
 	};
 
 	$scope.declineInv = function(teamName){
@@ -260,5 +292,76 @@ angular.module('teamform-member-app', ['firebase'])
 	};
 	$scope.refreshTeams(); // call to refresh teams...
 }])
+.controller("chatRoomCtrl", 
 
+		function($scope, $firebaseArray) {
+			$scope.input = {
+				message: "",
+				date: "",
+				userName: ""
+			};
+			var eventName = getURLParameter("q");
+			var ref = firebase.database().ref("chatRoom" + eventName);
+			$scope.chatList = $firebaseArray(ref);
+
+			$scope.msgAlt = function(name) {
+				if(name === firebase.auth().currentUser.displayName) {
+					return "message-alt";
+				}
+				return null;
+			};
+
+			$scope.bubbleAlt = function(name) {
+				if(name === firebase.auth().currentUser.displayName) {
+					return "bubble-alt";
+				}
+				return null;
+			};
+
+			$scope.ownMsg = function(name) {
+				if(name === firebase.auth().currentUser.displayName) {
+					return  true;
+				}
+				return false;
+			};
+
+			$scope.addMessage = function() {
+				// update the date
+				if($scope.input.message !== "" ) {
+					firebase.auth().onAuthStateChanged(function(firebaseUser) {
+						if(firebaseUser) {
+							var user = firebase.auth().currentUser;
+							$scope.input.userName = user.displayName;
+							$scope.input.date = new Date().toString();
+							$scope.chatList.$add($scope.input);
+						}
+					});
+				}
+			};
+			$scope.timeSince = function(date) {
+			    var seconds = Math.floor((new Date() - new Date(date)) / 1000);
+			    var interval = Math.floor(seconds / 31536000);
+			    if(interval >= 1) {
+			        return interval + " years ago";
+			    }
+			    interval = Math.floor(seconds / 2592000);
+			    if(interval >= 1) {
+			        return interval + " months ago";
+			    }
+			    interval = Math.floor(seconds / 86400);
+			    if(interval >= 1) {
+			        return interval + " days ago";
+			    }
+			    interval = Math.floor(seconds / 3600);
+			    if(interval >= 1) {
+			         return interval + " hours ago";
+			    }
+			    interval = Math.floor(seconds / 60);
+			    if(interval >= 1) {
+			        return interval + " minutes ago";
+			    }
+			    return Math.floor(seconds) + " seconds ago";
+			};
+		}
+)
 ;
